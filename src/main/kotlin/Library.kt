@@ -12,6 +12,10 @@ fun Angle.toLinear(radius: Distance): Distance = Meters.of(this.inRadians() * ra
 
 inline val Ultrasonic.range: Distance get() = rangeMM.millimeters
 
+/** Returns true if the period has elapsed. If it has, advances the clock by the period */
+inline fun Timer.advanceIfElapsed(time: Time) = advanceIfElapsed(time.inSeconds())
+inline fun Timer.hasElapsed(time: Time) = hasElapsed(time.inSeconds())
+
 // Number -> Measure
 
 inline val Number.meters: Distance get() = Meters.of(this.toDouble())
@@ -34,6 +38,7 @@ inline val Number.feetPerSecond: LinearVelocity get() = FeetPerSecond.of(this.to
 inline val Number.inchesPerSecond: LinearVelocity get() = InchesPerSecond.of(this.toDouble())
 
 inline val Number.rotationsPerSecond: AngularVelocity get() = RotationsPerSecond.of(this.toDouble())
+inline val Number.rotationsPerSecondPerSecond: AngularAcceleration get() = RotationsPerSecondPerSecond.of(this.toDouble())
 inline val Number.rpm: AngularVelocity get() = RPM.of(this.toDouble())
 inline val Number.radiansPerSecond: AngularVelocity get() = RadiansPerSecond.of(this.toDouble())
 inline val Number.degreesPerSecond: AngularVelocity get() = DegreesPerSecond.of(this.toDouble())
@@ -106,11 +111,13 @@ inline fun Angle.inDegrees() = `in`(Degrees)
 inline fun LinearVelocity.inMetersPerSecond() = `in`(MetersPerSecond)
 inline fun LinearVelocity.inFeetPerSecond() = `in`(FeetPerSecond)
 inline fun LinearVelocity.inInchesPerSecond() = `in`(InchesPerSecond)
+fun LinearVelocity.toAngular(radius: Distance) = RadiansPerSecond.of(this.inMetersPerSecond() / radius.inMeters())!!
 
 inline fun AngularVelocity.inRotationsPerSecond() = `in`(RotationsPerSecond)
 inline fun AngularVelocity.inRPM() = `in`(RPM)
 inline fun AngularVelocity.inRadiansPerSecond() = `in`(RadiansPerSecond)
 inline fun AngularVelocity.inDegreesPerSecond() = `in`(DegreesPerSecond)
+fun AngularVelocity.toLinear(radius: Distance) = MetersPerSecond.of(this.inRadiansPerSecond() * radius.inMeters())!!
 
 inline fun Frequency.inHertz() = `in`(Hertz)
 inline fun Frequency.inMillihertz() = `in`(Millihertz)
@@ -118,6 +125,8 @@ inline fun Frequency.inMillihertz() = `in`(Millihertz)
 inline fun LinearAcceleration.inMetersPerSecondPerSecond() = `in`(MetersPerSecondPerSecond)
 inline fun LinearAcceleration.inFeetPerSecondPerSecond() = `in`(FeetPerSecondPerSecond)
 inline fun LinearAcceleration.inGs() = `in`(Gs)
+
+inline fun AngularAcceleration.inRotationsPerSecondPerSecond() = `in`(RotationsPerSecondPerSecond)
 
 inline fun Mass.inKilograms() = `in`(Kilograms)
 inline fun Mass.inGrams() = `in`(Grams)
